@@ -2,6 +2,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -88,51 +89,46 @@ public class SignUpTest {
         ChromeDriver mailDriver = new ChromeDriver(options);
         mailDriver.get("https://mail.tm/en/");
 
+        WebDriverWait mailWait = new WebDriverWait(mailDriver, Duration.ofSeconds(10));
+
         Thread.sleep(500);
 
         mailDriver.findElement(By.cssSelector("#__nuxt > div.h-screen.flex.overflow-hidden.bg-gray-100.antialiased.dark\\:bg-gray-900 > div.w-0.flex.flex-1.flex-col.overflow-hidden > div > div > div.flex.items-center.md\\:ml-6.sm\\:ml-4 > button.rounded-\\[calc\\(var\\(--ui-radius\\)\\*1\\.5\\)\\].font-medium.inline-flex.items-center.focus\\:outline-hidden.disabled\\:cursor-not-allowed.aria-disabled\\:cursor-not-allowed.disabled\\:opacity-75.aria-disabled\\:opacity-75.transition-colors.px-2\\.5.py-1\\.5.text-sm.gap-1\\.5.text-\\(--ui-primary\\).hover\\:text-\\(--ui-primary\\)\\/75.disabled\\:text-\\(--ui-primary\\).aria-disabled\\:text-\\(--ui-primary\\).focus-visible\\:ring-2.focus-visible\\:ring-inset.focus-visible\\:ring-\\(--ui-primary\\).group.flex-1.justify-between > span")).click();
         mailDriver.findElement(By.xpath("//*[@id=\"reka-dropdown-menu-content-v-1-9\"]/div[2]/button[2]")).click();
-        Thread.sleep(2000);
-        mailDriver.findElement(By.xpath("/html/body/div[8]/div/div/div[1]/form/div[1]/div[2]/div/input")).sendKeys(uniqueEmail);
+        Thread.sleep(3000);
+        mailDriver.findElement(By.cssSelector("#v-1-15")).sendKeys(uniqueEmail);
         mailDriver.findElement(By.xpath("//*[@id=\"v-1-16\"]")).sendKeys(uniqueEmailPassword);
         Thread.sleep(2000);
-        mailDriver.findElement(By.xpath("/html/body/div[8]/div/div/div[2]/span[1]/button")).click();
+        mailDriver.findElement(By.cssSelector("body > div.fixed.bg-\\(--ui-bg\\).divide-y.divide-\\(--ui-border\\).flex.flex-col.focus\\:outline-none.data-\\[state\\=open\\]\\:animate-\\[scale-in_200ms_ease-out\\].data-\\[state\\=closed\\]\\:animate-\\[scale-out_200ms_ease-in\\].top-1\\/2.left-1\\/2.-translate-x-1\\/2.-translate-y-1\\/2.w-\\[calc\\(100vw-2rem\\)\\].max-w-lg.max-h-\\[calc\\(100vh-2rem\\)\\].sm\\:max-h-\\[calc\\(100vh-4rem\\)\\].rounded-\\[calc\\(var\\(--ui-radius\\)\\*2\\)\\].shadow-lg.ring.ring-\\(--ui-border\\) > div > div > div.mt-5.sm\\:grid.sm\\:grid-flow-row-dense.sm\\:grid-cols-2.sm\\:mt-8.sm\\:gap-3 > span.w-full.flex.rounded-md.shadow-sm.sm\\:col-start-2 > button")).click();
         Thread.sleep(1000);
         mailDriver.findElement(By.xpath("//*[@id=\"__nuxt\"]/div[1]/div[2]/main/div[2]/div[2]/ul/li/a/div")).click();
         Thread.sleep(10000);
-        WebElement otpElement = mailDriver.findElement(By.xpath("/html/body/center/div/table/tbody/tr/td[2]/table/tbody/tr/td/div/table/tbody/tr[2]/td/div/table/tbody/tr/td/div/div/span/font/span/span/div/p"));
-        System.out.println("OTP Kodu: " + otpElement.getText().trim());
 
+        // İlgili iframe'i locate edip geçiş yapıyoruz
+        WebDriverWait wait = new WebDriverWait(mailDriver, Duration.ofSeconds(20));
+        WebElement iframeElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("iFrameResizer0")));
+        mailDriver.switchTo().frame(iframeElement);
 
-        // Cloudflare doğrulaması için çerezleri yönetme
-        /*Set<Cookie> cookies = driver.manage().getCookies();
-        System.out.println("Mevcut çerezler:");
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().contains("cf_") ||
-                    cookie.getName().contains("__cf") ||
-                    cookie.getName().contains("_cfuvid") ||
-                    cookie.getName().contains("turnstile")) {
-                try {
-                    System.out.println("Eklenen çerez: " + cookie.getName());
-                    driver.manage().addCookie(cookie);
-                } catch (Exception e) {
-                    System.out.println("Çerez eklenirken hata: " + cookie.getName());
-                }
-            }
+        // OTP elementini locate edin; burada, div içinde p etiketini arıyoruz
+        WebElement otpElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("div[style*='text-align: center'] p")));
+        String otp = otpElement.getText().trim();
+        System.out.println("Ayıklanan OTP: " + otp);
+
+        mailDriver.quit();
+
+        List<WebElement> otpInputs = driver.findElements(By.cssSelector("div[formarrayname='otp'] input"));
+
+// Eğer inputlar disabled ise, önce onları etkinleştirmek için disabled attribute'unu kaldırabilirsiniz:
+        for (WebElement input : otpInputs) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('disabled');", input);
         }
-        Thread.sleep(2000);
 
-        try {
-            boolean challengeExists = !wait.until(ExpectedConditions.invisibilityOfElementLocated(
-                    By.cssSelector("[src*='challenges.cloudflare.com']")));
-            if (challengeExists) {
-                System.out.println("Cloudflare doğrulaması hala aktif");
-            } else {
-                System.out.println("Cloudflare doğrulaması başarıyla geçildi");
-            }
-        } catch (Exception e) {
-            System.out.println("Cloudflare durumu kontrol edilirken hata oluştu");
-        }*/
+// OTP string'ini karakter karakter inputlara gönderelim:
+        for (int i = 0; i < otp.length() && i < otpInputs.size(); i++) {
+            otpInputs.get(i).sendKeys(String.valueOf(otp.charAt(i)));
+        }
+
     }
 
     private String generateUniqueEmailBody() {
