@@ -1,31 +1,15 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.devtools.DevTools;
-import org.openqa.selenium.devtools.NetworkInterceptor;
-import org.openqa.selenium.devtools.v85.network.Network;
-import org.openqa.selenium.devtools.v85.network.model.Headers;
 import org.openqa.selenium.Cookie;
 import org.testng.annotations.Test;
-import java.util.Optional;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Set;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
-import javax.mail.*;
-import javax.mail.internet.*;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Random;
-import java.util.List;
-import java.util.Arrays;
+
 
 public class SignUpTest {
 
@@ -85,9 +69,9 @@ public class SignUpTest {
         for (Cookie cookie : cookies) {
             // Tüm önemli çerezleri kontrol et
             if (cookie.getName().contains("cf_") ||
-                cookie.getName().contains("__cf") ||
-                cookie.getName().contains("_cfuvid") ||
-                cookie.getName().contains("turnstile")) {
+                    cookie.getName().contains("__cf") ||
+                    cookie.getName().contains("_cfuvid") ||
+                    cookie.getName().contains("turnstile")) {
                 try {
                     System.out.println("Eklenen çerez: " + cookie.getName());
                     driver.manage().addCookie(cookie);
@@ -105,7 +89,7 @@ public class SignUpTest {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             boolean challengeExists = !wait.until(ExpectedConditions.invisibilityOfElementLocated(
-                By.cssSelector("[src*='challenges.cloudflare.com']")));
+                    By.cssSelector("[src*='challenges.cloudflare.com']")));
 
             if (challengeExists) {
                 System.out.println("Cloudflare doğrulaması hala aktif");
