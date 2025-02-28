@@ -1,22 +1,24 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SignUpTest {
 
@@ -38,14 +40,12 @@ public class SignUpTest {
         driver.get("https://app.forceget.com/system/account/register");
         Thread.sleep(2500);
 
-        // Guerrilla Mail üzerinden geçici e-posta oluştur ve SID token'ı al
-        String uniqueEmail = generateRandomEmailFromGuerrillaMail();
-        if(uniqueEmail == null) {
-            System.out.println("E-posta oluşturulamadı, testi sonlandırıyoruz.");
-            driver.quit();
-            return;
-        }
         String uniquePhone = generateUniquePhone();
+        String uniqueEmailBody = generateUniqueEmailBody();
+        String uniqueEmail = genarteUniqueEmail();
+        String uniqueEmailPassword = generateRandomEmailPassword();
+
+        createMailTmAccount(uniqueEmail,uniqueEmailPassword);
 
         // Form doldurma işlemleri
         driver.findElement(By.cssSelector("#firstName")).sendKeys("Burak");
@@ -79,17 +79,33 @@ public class SignUpTest {
         driver.findElement(By.xpath("/html/body/app-root/app-full-layout/sign-up1/div/div[1]/perfect-scrollbar/div/div[1]/div/button"))
                 .click();
 
-        // Şimdi maili kontrol etmek için ayrı bir driver oluşturuyoruz
+        WebDriverWait overlayWait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        overlayWait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("#cdk-overlay-3 > nz-modal-container > div > div > div")));
+        System.out.println("Verify penceresi açıldı!");
+
+        // Yeni bir tarayıcı penceresi açıp mail.tm sitesine gitmek:
         ChromeDriver mailDriver = new ChromeDriver(options);
-        mailDriver.get("https://www.guerrillamail.com/");
-        Thread.sleep(3000); // Sayfanın tam yüklenmesi için bekleyelim
+        mailDriver.get("https://mail.tm/en/");
 
+        Thread.sleep(500);
 
-
+        mailDriver.findElement(By.cssSelector("#__nuxt > div.h-screen.flex.overflow-hidden.bg-gray-100.antialiased.dark\\:bg-gray-900 > div.w-0.flex.flex-1.flex-col.overflow-hidden > div > div > div.flex.items-center.md\\:ml-6.sm\\:ml-4 > button.rounded-\\[calc\\(var\\(--ui-radius\\)\\*1\\.5\\)\\].font-medium.inline-flex.items-center.focus\\:outline-hidden.disabled\\:cursor-not-allowed.aria-disabled\\:cursor-not-allowed.disabled\\:opacity-75.aria-disabled\\:opacity-75.transition-colors.px-2\\.5.py-1\\.5.text-sm.gap-1\\.5.text-\\(--ui-primary\\).hover\\:text-\\(--ui-primary\\)\\/75.disabled\\:text-\\(--ui-primary\\).aria-disabled\\:text-\\(--ui-primary\\).focus-visible\\:ring-2.focus-visible\\:ring-inset.focus-visible\\:ring-\\(--ui-primary\\).group.flex-1.justify-between > span")).click();
+        mailDriver.findElement(By.xpath("//*[@id=\"reka-dropdown-menu-content-v-1-9\"]/div[2]/button[2]")).click();
+        Thread.sleep(2000);
+        mailDriver.findElement(By.xpath("/html/body/div[8]/div/div/div[1]/form/div[1]/div[2]/div/input")).sendKeys(uniqueEmail);
+        mailDriver.findElement(By.xpath("//*[@id=\"v-1-16\"]")).sendKeys(uniqueEmailPassword);
+        Thread.sleep(2000);
+        mailDriver.findElement(By.xpath("/html/body/div[8]/div/div/div[2]/span[1]/button")).click();
+        Thread.sleep(1000);
+        mailDriver.findElement(By.xpath("//*[@id=\"__nuxt\"]/div[1]/div[2]/main/div[2]/div[2]/ul/li/a/div")).click();
+        Thread.sleep(10000);
+        WebElement otpElement = mailDriver.findElement(By.xpath("/html/body/center/div/table/tbody/tr/td[2]/table/tbody/tr/td/div/table/tbody/tr[2]/td/div/table/tbody/tr/td/div/div/span/font/span/span/div/p"));
+        System.out.println("OTP Kodu: " + otpElement.getText().trim());
 
 
         // Cloudflare doğrulaması için çerezleri yönetme
-        Set<Cookie> cookies = driver.manage().getCookies();
+        /*Set<Cookie> cookies = driver.manage().getCookies();
         System.out.println("Mevcut çerezler:");
         for (Cookie cookie : cookies) {
             if (cookie.getName().contains("cf_") ||
@@ -107,7 +123,6 @@ public class SignUpTest {
         Thread.sleep(2000);
 
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             boolean challengeExists = !wait.until(ExpectedConditions.invisibilityOfElementLocated(
                     By.cssSelector("[src*='challenges.cloudflare.com']")));
             if (challengeExists) {
@@ -117,148 +132,82 @@ public class SignUpTest {
             }
         } catch (Exception e) {
             System.out.println("Cloudflare durumu kontrol edilirken hata oluştu");
-        }
-
-        // Guerrilla Mail üzerinden doğrulama kodunu çekme
-        String verificationCode = getVerificationCodeFromGuerrillaMail();
-        System.out.println("Alınan doğrulama kodu: " + verificationCode);
-
-        // Test tamamlanmadan driver'ı kapatabilirsiniz.
-        driver.quit();
+        }*/
     }
 
-    // Guerrilla Mail API'si kullanarak geçici e-posta oluşturma
-    private String generateRandomEmailFromGuerrillaMail() {
-        try {
-            URL url = new URL("https://api.guerrillamail.com/ajax.php?f=get_email_address");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty("Accept-Language", "en-US,en;q=0.9");
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
-
-            int responseCode = conn.getResponseCode();
-            System.out.println("Guerrilla Mail Response code: " + responseCode);
-            if (responseCode != 200) {
-                throw new Exception("HTTP response code: " + responseCode);
-            }
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder content = new StringBuilder();
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
-            }
-            in.close();
-            conn.disconnect();
-
-            JSONObject jsonResponse = new JSONObject(content.toString());
-            String email = jsonResponse.getString("email_addr");
-            guerrillaSidToken = jsonResponse.getString("sid_token");
-            System.out.println("Oluşturulan Guerrilla Mail email: " + email);
-            System.out.println("SID Token: " + guerrillaSidToken);
-            return email;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    private String generateUniqueEmailBody() {
+        long timestamp = System.currentTimeMillis();
+        String userName = generateRandomEmailPassword();
+        return userName + timestamp;
     }
 
-    // Guerrilla Mail API'si ile gelen kutusunu kontrol edip doğrulama kodunu çeken metot
-    private String getVerificationCodeFromGuerrillaMail() {
-        try {
-            int attempts = 0;
-            while (attempts < 10) {
-                // Gelen maillerin listesini al
-                URL url = new URL("https://api.guerrillamail.com/ajax.php?f=get_email_list&offset=0&sid_token="
-                        + guerrillaSidToken + "&seq=0");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                        + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");
-                conn.setRequestProperty("Accept", "application/json");
-                conn.setRequestProperty("Accept-Language", "en-US,en;q=0.9");
-                conn.setConnectTimeout(5000);
-                conn.setReadTimeout(5000);
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder content = new StringBuilder();
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine);
-                }
-                in.close();
-                conn.disconnect();
-
-                String response = content.toString().trim();
-                // Yanıt geçerli JSON formatında mı kontrol edelim
-                if(response.isEmpty() || !response.startsWith("{")){
-                    System.out.println("Geçersiz get_email_list yanıtı: " + response);
-                    attempts++;
-                    Thread.sleep(5000);
-                    continue;
-                }
-
-                JSONObject jsonResponse = new JSONObject(response);
-                JSONArray emailList = jsonResponse.getJSONArray("list");
-                if (emailList.length() > 0) {
-                    // İlk maile ait bilgileri al
-                    JSONObject firstEmail = emailList.getJSONObject(0);
-                    int emailId = firstEmail.getInt("mail_id");
-
-                    // Seçilen mailin detaylarını al
-                    URL fetchUrl = new URL("https://api.guerrillamail.com/ajax.php?f=fetch_email&id="
-                            + emailId + "&sid_token=" + guerrillaSidToken);
-                    HttpURLConnection fetchConn = (HttpURLConnection) fetchUrl.openConnection();
-                    fetchConn.setRequestMethod("GET");
-                    fetchConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                            + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");
-                    fetchConn.setRequestProperty("Accept", "application/json");
-                    fetchConn.setRequestProperty("Accept-Language", "en-US,en;q=0.9");
-                    fetchConn.setConnectTimeout(5000);
-                    fetchConn.setReadTimeout(5000);
-
-                    BufferedReader fetchIn = new BufferedReader(new InputStreamReader(fetchConn.getInputStream()));
-                    StringBuilder fetchContent = new StringBuilder();
-                    while ((inputLine = fetchIn.readLine()) != null) {
-                        fetchContent.append(inputLine);
-                    }
-                    fetchIn.close();
-                    fetchConn.disconnect();
-
-                    String fetchResponse = fetchContent.toString().trim();
-                    if(fetchResponse.isEmpty() || !fetchResponse.startsWith("{")){
-                        System.out.println("Geçersiz fetch_email yanıtı: " + fetchResponse);
-                        attempts++;
-                        Thread.sleep(5000);
-                        continue;
-                    }
-
-                    JSONObject emailDetail = new JSONObject(fetchResponse);
-                    String body = emailDetail.getString("mail_body");
-                    // Örneğin doğrulama kodu 6 haneli sayı ise:
-                    Pattern pattern = Pattern.compile("(\\d{6})");
-                    Matcher matcher = pattern.matcher(body);
-                    if (matcher.find()) {
-                        return matcher.group(1);
-                    }
-                }
-                attempts++;
-                Thread.sleep(15000);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    private String genarteUniqueEmail(){
+        String emailBody = generateUniqueEmailBody();
+        return emailBody + "@edny.net";
     }
 
-    // Benzersiz telefon numarası oluşturma metodu
+    private String generateRandomEmailPassword() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        String password = "";
+        for (int i = 0; i < 8; i++) {
+            int index = (int) (Math.random() * chars.length());
+            password += chars.charAt(index);
+        }
+        return password;
+    }
+
     private String generateUniquePhone() {
         Random random = new Random();
         int phoneNumber = random.nextInt(900000) + 100000;
         return "505" + phoneNumber;
+    }
+
+    public static void createMailTmAccount(String email, String password) {
+        try {
+
+            URL url = new URL("https://api.mail.tm/accounts");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            JSONObject payload = new JSONObject();
+            payload.put("address", email);
+            payload.put("password", password);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(payload.toString().getBytes(StandardCharsets.UTF_8));
+            }
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 201 && responseCode != 200) {
+                System.out.println("Hesap oluşturulamadı. HTTP Response Code: " + responseCode);
+                BufferedReader errIn = new BufferedReader(new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8));
+                StringBuilder errContent = new StringBuilder();
+                String line;
+                while ((line = errIn.readLine()) != null) {
+                    errContent.append(line);
+                }
+                errIn.close();
+                System.out.println("Error: " + errContent.toString());
+                return;
+            }
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+            StringBuilder responseContent = new StringBuilder();
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                responseContent.append(inputLine);
+            }
+            in.close();
+            conn.disconnect();
+
+            JSONObject jsonResponse = new JSONObject(responseContent.toString());
+            System.out.println("Hesap oluşturuldu: " + jsonResponse);
+            System.out.println("Oluşturulan mail: " + email);
+            System.out.println("Oluşturulan şifre: " + password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
