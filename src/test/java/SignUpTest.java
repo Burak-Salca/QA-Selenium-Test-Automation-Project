@@ -100,17 +100,16 @@ public class SignUpTest {
         mailDriver.findElement(By.xpath("//*[@id=\"v-1-16\"]")).sendKeys(uniqueEmailPassword);
         Thread.sleep(2000);
         mailDriver.findElement(By.cssSelector("body > div.fixed.bg-\\(--ui-bg\\).divide-y.divide-\\(--ui-border\\).flex.flex-col.focus\\:outline-none.data-\\[state\\=open\\]\\:animate-\\[scale-in_200ms_ease-out\\].data-\\[state\\=closed\\]\\:animate-\\[scale-out_200ms_ease-in\\].top-1\\/2.left-1\\/2.-translate-x-1\\/2.-translate-y-1\\/2.w-\\[calc\\(100vw-2rem\\)\\].max-w-lg.max-h-\\[calc\\(100vh-2rem\\)\\].sm\\:max-h-\\[calc\\(100vh-4rem\\)\\].rounded-\\[calc\\(var\\(--ui-radius\\)\\*2\\)\\].shadow-lg.ring.ring-\\(--ui-border\\) > div > div > div.mt-5.sm\\:grid.sm\\:grid-flow-row-dense.sm\\:grid-cols-2.sm\\:mt-8.sm\\:gap-3 > span.w-full.flex.rounded-md.shadow-sm.sm\\:col-start-2 > button")).click();
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         mailDriver.findElement(By.xpath("//*[@id=\"__nuxt\"]/div[1]/div[2]/main/div[2]/div[2]/ul/li/a/div")).click();
-        Thread.sleep(10000);
 
         // İlgili iframe'i locate edip geçiş yapıyoruz
-        WebDriverWait wait = new WebDriverWait(mailDriver, Duration.ofSeconds(20));
-        WebElement iframeElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("iFrameResizer0")));
+
+        WebElement iframeElement = mailWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("iFrameResizer0")));
         mailDriver.switchTo().frame(iframeElement);
 
         // OTP elementini locate edin; burada, div içinde p etiketini arıyoruz
-        WebElement otpElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
+        WebElement otpElement = mailWait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.cssSelector("div[style*='text-align: center'] p")));
         String otp = otpElement.getText().trim();
         System.out.println("Ayıklanan OTP: " + otp);
@@ -119,16 +118,36 @@ public class SignUpTest {
 
         List<WebElement> otpInputs = driver.findElements(By.cssSelector("div[formarrayname='otp'] input"));
 
-// Eğer inputlar disabled ise, önce onları etkinleştirmek için disabled attribute'unu kaldırabilirsiniz:
+        // Eğer inputlar disabled ise, önce onları etkinleştirmek için disabled attribute'unu kaldırabilirsiniz:
         for (WebElement input : otpInputs) {
             ((JavascriptExecutor) driver).executeScript("arguments[0].removeAttribute('disabled');", input);
         }
 
-// OTP string'ini karakter karakter inputlara gönderelim:
+        // OTP string'ini karakter karakter inputlara gönderelim:
         for (int i = 0; i < otp.length() && i < otpInputs.size(); i++) {
             otpInputs.get(i).sendKeys(String.valueOf(otp.charAt(i)));
         }
 
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
+        WebElement emailInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.cssSelector("body > app-root > app-full-layout > login1 > div > div.flex-1.flex.items-center.justify-center.main-content-form > div > form > nz-form-item:nth-child(1) > nz-form-control > div > div > nz-input-group > input")
+        ));
+        emailInput.clear();
+        emailInput.sendKeys(uniqueEmail);
+        driver.findElement(By.cssSelector("body > app-root > app-full-layout > login1 > div > div.flex-1.flex.items-center.justify-center.main-content-form > div > form > nz-form-item.ant-form-item.ant-row.relative > nz-form-control > div > div > nz-input-group > input")).sendKeys("Siyah.0699*");
+        Thread.sleep(2000);
+        driver.findElement(By.cssSelector("body > app-root > app-full-layout > login1 > div > div.flex-1.flex.items-center.justify-center.main-content-form > div > form > nz-form-item:nth-child(3) > nz-form-control > div > div > div > button")).click();
+
+        WebElement welcomeElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//h4[contains(text(),'Welcome')]")
+        ));
+        String welcomeText = welcomeElement.getText().trim();
+        if (welcomeText.contains("Welcome")) {
+            System.out.println("Giriş başarılı, metin: " + welcomeText);
+        } else {
+            System.out.println("Giriş başarısız, metin: " + welcomeText);
+        }
     }
 
     private String generateUniqueEmailBody() {
