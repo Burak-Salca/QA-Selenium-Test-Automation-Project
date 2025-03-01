@@ -34,6 +34,7 @@ public class MailPage extends Data {
     }
 
     public MailPage enterPassword(String text) throws InterruptedException {
+        Thread.sleep(500);
         mailDriver.findElement(By.xpath("//*[@id=\"v-1-16\"]")).sendKeys(text);
         Thread.sleep(1000);
         return this;

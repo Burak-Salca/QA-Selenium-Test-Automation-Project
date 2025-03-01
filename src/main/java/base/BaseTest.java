@@ -10,7 +10,7 @@ import org.testng.annotations.BeforeMethod;
 
 import java.time.Duration;
 
-public class BaseTest extends Data {
+public class BaseTest extends BaseLibrary {
 
     @BeforeMethod
     public void beforeTest(){
@@ -24,7 +24,6 @@ public class BaseTest extends Data {
         createMailTmAccount(uniqueEmail,uniqueEmailPassword);
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.manage().window().maximize();
         driver.get(url);
 
     }

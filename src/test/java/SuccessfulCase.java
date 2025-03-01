@@ -30,7 +30,6 @@ public class SuccessfulCase extends BaseTest {
     public void beforeTest(){
         super.beforeTest(); // Önce parent class'ın beforeTest metodunu çağır
 
-        // Page nesnelerini driver ve wait oluşturulduktan sonra initialize et
         registerPage = new RegisterPage();
         mailPage = new MailPage();
         loginPage = new LoginPage();
@@ -39,10 +38,13 @@ public class SuccessfulCase extends BaseTest {
 
     @Test
     public void RegisterAndLoginTest() throws InterruptedException {
+
+        Thread.sleep(5000);
+
         registerPage.enterFirstName(firstName)
                     .enterLastName(lastName)
                     .enterCountryCode(countryCode);
-        Thread.sleep(1500);
+        sleep(1500);
         registerPage.clickCountryCode()
                     .enterPhoneNumber(uniquePhone)
                     .enterCompany(company)
@@ -67,7 +69,7 @@ public class SuccessfulCase extends BaseTest {
             mailPage.openMail();
             Thread.sleep(500);
             mailPage.openLoginMail();
-            Thread.sleep(3000);
+            Thread.sleep(1000);
             mailPage.enterMail(uniqueEmail)
                     .enterPassword(uniqueEmailPassword)
                     .clickLogin();
