@@ -4,6 +4,8 @@ import base.BaseTest;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ import java.util.List;
 public class RegisterPage extends BaseTest {
 
     public RegisterPage enterFirstName(String text){
-        driver.findElement(By.cssSelector("#firstName")).sendKeys(text);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#firstName"))).sendKeys(text);
         return this;
     }
 

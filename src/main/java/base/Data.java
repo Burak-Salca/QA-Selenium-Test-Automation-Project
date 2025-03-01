@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Random;
 
 public class Data {
@@ -22,7 +21,7 @@ public class Data {
     public String uniquePhone = generateUniquePhone();
     public String uniqueEmail = genarteUniqueEmail();
     public String uniqueEmailPassword = generateRandomEmailPassword();
-    public String firstName = "Melih";
+    public String firstName = "Burak";
     public String lastName = "Salça";
     public String countryCode = "+90";
     public String company = "Company";

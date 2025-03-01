@@ -39,9 +39,6 @@ public class SuccessfulCase extends BaseTest {
 
     @Test
     public void RegisterAndLoginTest() throws InterruptedException {
-
-        Thread.sleep(2500);
-
         registerPage.enterFirstName(firstName)
                     .enterLastName(lastName)
                     .enterCountryCode(countryCode);
@@ -98,6 +95,7 @@ public class SuccessfulCase extends BaseTest {
                     .enterPassword(password)
                     .clickLogin();
             try {
+                Thread.sleep(1000);
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h4[contains(text(),'Welcome')]")));
                 System.out.println("Başarılı bir şekilde giriş yapıldı.");
                 mainPage.isLoginSuccessful();
