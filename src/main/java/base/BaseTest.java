@@ -14,7 +14,7 @@ import java.time.Duration;
 public class BaseTest extends BaseLibrary {
 
     @BeforeMethod(description = "Web taraıcı açıldı. Siteye yönlendirildi")
-    public void beforeTest(){
+    public void beforeTest() throws InterruptedException {
         cleanAllureResults();
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
@@ -28,6 +28,7 @@ public class BaseTest extends BaseLibrary {
         driver.manage().window().maximize();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get(url);
+        Thread.sleep(5000);
     }
 
     @AfterMethod(description = "Web tarayıcı kapandı")

@@ -13,18 +13,21 @@ import java.time.Duration;
 public class MailPage extends BaseLibrary {
 
     @Step("E-posta web tarayıcıda açıldı")
-    public MailPage openMail(){
+    public MailPage openMail() throws InterruptedException {
         mailDriver = new ChromeDriver();
         mailWait = new WebDriverWait(mailDriver, Duration.ofSeconds(10));
         mailDriver.get("https://mail.tm/en/");
+        Thread.sleep(500);
         return this;
     }
 
     @Step("E-posta giriş sayfası açıldı")
-    public void openLoginMail() throws InterruptedException {
+    public MailPage openLoginMail() throws InterruptedException {
         mailDriver.findElement(By.cssSelector("#__nuxt > div.h-screen.flex.overflow-hidden.bg-gray-100.antialiased.dark\\:bg-gray-900 > div.w-0.flex.flex-1.flex-col.overflow-hidden > div > div > div.flex.items-center.md\\:ml-6.sm\\:ml-4 > button.rounded-\\[calc\\(var\\(--ui-radius\\)\\*1\\.5\\)\\].font-medium.inline-flex.items-center.focus\\:outline-hidden.disabled\\:cursor-not-allowed.aria-disabled\\:cursor-not-allowed.disabled\\:opacity-75.aria-disabled\\:opacity-75.transition-colors.px-2\\.5.py-1\\.5.text-sm.gap-1\\.5.text-\\(--ui-primary\\).hover\\:text-\\(--ui-primary\\)\\/75.disabled\\:text-\\(--ui-primary\\).aria-disabled\\:text-\\(--ui-primary\\).focus-visible\\:ring-2.focus-visible\\:ring-inset.focus-visible\\:ring-\\(--ui-primary\\).group.flex-1.justify-between > span")).click();
-        Thread.sleep(200);
+        Thread.sleep(500);
         mailDriver.findElement(By.xpath("//*[@id=\"reka-dropdown-menu-content-v-1-9\"]/div[2]/button[2]")).click();
+        Thread.sleep(1000);
+        return this;
     }
 
     @Step("E-posta alanı girildi")

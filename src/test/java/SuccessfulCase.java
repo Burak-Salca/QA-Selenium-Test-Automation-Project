@@ -28,8 +28,8 @@ public class SuccessfulCase extends BaseTest {
 
     @BeforeMethod
     @Override
-    public void beforeTest(){
-        super.beforeTest(); // Önce parent class'ın beforeTest metodunu çağır
+    public void beforeTest() throws InterruptedException {
+        super.beforeTest();
 
         registerPage = new RegisterPage();
         mailPage = new MailPage();
@@ -39,26 +39,21 @@ public class SuccessfulCase extends BaseTest {
 
     @Test(description = "Başarılı kayıt işleminden sonra başarılı giriş kontrolü")
     public void RegisterAndLoginTest() throws InterruptedException {
-        Thread.sleep(5000);
 
         registerPage.enterFirstName(firstName)
                     .enterLastName(lastName)
-                    .enterCountryCode(countryCode);
-        Thread.sleep(1500);
-        registerPage.clickCountryCode()
+                    .enterCountryCode(countryCode)
+                    .clickCountryCode()
                     .enterPhoneNumber(uniquePhone)
                     .enterCompany(company)
                     .enterEmail(uniqueEmail)
-                    .enterTitle(title);
-        Thread.sleep(1500);
-        registerPage.clickTitle()
+                    .enterTitle(title)
+                    .clickTitle()
                     .enterFirstPassword(password)
                     .enterSecondPassword(password)
-                    .clickCheckBox();
-        Thread.sleep(1000);
-        registerPage.clickAccept();
-        Thread.sleep(1000);
-        registerPage.clickSubmit();
+                    .clickCheckBox()
+                    .clickAccept()
+                    .clickSubmit();
 
         String otp = null;
 
@@ -66,11 +61,9 @@ public class SuccessfulCase extends BaseTest {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#cdk-overlay-3 > nz-modal-container > div > div > div")));
             System.out.println("Verify kodu yollandı");
 
-            mailPage.openMail();
-            Thread.sleep(500);
-            mailPage.openLoginMail();
-            Thread.sleep(1000);
-            mailPage.enterMail(uniqueEmail)
+            mailPage.openMail()
+                    .openLoginMail()
+                    .enterMail(uniqueEmail)
                     .enterPassword(uniqueEmailPassword)
                     .clickLogin();
             try{
@@ -96,8 +89,8 @@ public class SuccessfulCase extends BaseTest {
             loginPage.enterEmail(uniqueEmail)
                     .enterPassword(password)
                     .clickLogin();
+            Thread.sleep(1000);
             try {
-                Thread.sleep(1000);
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h4[contains(text(),'Welcome')]")));
                 System.out.println("Başarılı bir şekilde giriş yapıldı.");
                 mainPage.isLoginSuccessful();
@@ -109,7 +102,5 @@ public class SuccessfulCase extends BaseTest {
         } catch (Exception e){
             Assert.fail("Doğrulama kodu doğru değil.");
         }
-
     }
-
 }

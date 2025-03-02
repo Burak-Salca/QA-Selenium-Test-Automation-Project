@@ -26,9 +26,10 @@ public class RegisterPage extends BaseTest {
     }
 
 
-    public RegisterPage enterCountryCode(String text){
+    public RegisterPage enterCountryCode(String text) throws InterruptedException {
         driver.findElement(By.cssSelector("body > app-root > app-full-layout > sign-up1 > div > div.flex-1.flex.items-center.justify-center.main-content-form > perfect-scrollbar > div > div.ps-content > div > form > div.flex.custom-gap > nz-form-item.ant-form-item.ant-row.mb-0.min-w-100px > nz-form-control > div > div > nz-input-group > forceget-country-dropdown > nz-select > nz-select-top-control > nz-select-search > input"))
                 .sendKeys(text);
+        Thread.sleep(1500);
         return this;
     }
 
@@ -59,9 +60,10 @@ public class RegisterPage extends BaseTest {
     }
 
     @Step("Ünvan girildi")
-    public RegisterPage enterTitle(String text){
+    public RegisterPage enterTitle(String text) throws InterruptedException {
         driver.findElement(By.xpath("/html/body/app-root/app-full-layout/sign-up1/div/div[1]/perfect-scrollbar/div/div[1]/div/form/div[3]/nz-form-item/nz-form-control/div/div/nz-select/nz-select-top-control/nz-select-search/input"))
                 .sendKeys(text);
+        Thread.sleep(1500);
         return this;
     }
 
@@ -87,20 +89,25 @@ public class RegisterPage extends BaseTest {
     }
 
     @Step("Hizmet şartları ve gizlilik politikası okundu")
-    public void clickCheckBox(){
+    public RegisterPage clickCheckBox() throws InterruptedException {
         driver.findElement(By.className("checkbox-box")).click();
+        Thread.sleep(1000);
+        return this;
     }
 
     @Step("Hizmet şartları ve gizlilik politikası onaylandı")
-    public void clickAccept(){
+    public RegisterPage clickAccept() throws InterruptedException {
         driver.findElement(By.cssSelector("#cdk-overlay-2 > nz-modal-container > div > div > div.ant-modal-footer.ng-tns-c2116847144-12.ng-star-inserted > div > button > span"))
                 .click();
+        Thread.sleep(1000);
+        return this;
     }
 
     @Step("Bütün form elemanları gerekli şekilde dolduruldu. Kayıt ol butonuna basıldı")
     public void clickSubmit() {
         WebElement submitButton = driver.findElement(By.xpath("/html/body/app-root/app-full-layout/sign-up1/div/div[1]/perfect-scrollbar/div/div[1]/div/button"));
         if(!submitButton.isEnabled()){
+            screenshot();
             Assert.fail("Form eksik ya da yanlış dolduruldu");
         }
         else{
