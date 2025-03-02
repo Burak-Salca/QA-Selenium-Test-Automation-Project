@@ -1,4 +1,5 @@
 import base.BaseTest;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -36,7 +37,7 @@ public class SuccessfulCase extends BaseTest {
         mainPage = new MainPage();
     }
 
-    @Test
+    @Test(description = "Başarılı kayıt işleminden sonra başarılı giriş kontrolü")
     public void RegisterAndLoginTest() throws InterruptedException {
 
         Thread.sleep(5000);

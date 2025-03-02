@@ -2,6 +2,7 @@ package pages;
 
 
 import base.Data;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -9,6 +10,7 @@ import org.testng.Assert;
 
 public class MainPage extends Data {
 
+    @Step("Başarılı giriş yapıldı. Ana sayfaya yönlendirildi")
     public void isLoginSuccessful() {
         try {
             WebElement welcomeElement = wait.until(ExpectedConditions.visibilityOfElementLocated(

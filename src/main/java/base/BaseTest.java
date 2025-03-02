@@ -1,6 +1,7 @@
 package base;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -12,7 +13,7 @@ import java.time.Duration;
 
 public class BaseTest extends BaseLibrary {
 
-    @BeforeMethod
+    @BeforeMethod(description = "Web taraıcı açıldı. Siteye yönlendirildi")
     public void beforeTest(){
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
@@ -28,7 +29,7 @@ public class BaseTest extends BaseLibrary {
 
     }
 
-    @AfterMethod
+    @AfterMethod(description = "Web tarayıcı kapandı")
     public void afterTest(){
         driver.quit();
     }
