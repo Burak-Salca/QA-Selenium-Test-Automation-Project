@@ -1,4 +1,4 @@
-# 🧪 QA Selenium Test Automation Project
+# 🧪 QA Selenium Test Otomasyon Projesi
 
 ## 📌 Proje Açıklaması
 Bu proje, **Selenium WebDriver, Java ve TestNG kullanarak bir web uygulamasının başarılı bir kayıt ve başarılı bir giriş test otomasyonunu gerçekleştirmek amacıyla geliştirilmiştir**.  
