@@ -103,7 +103,7 @@ public class RegisterPage extends BaseTest {
         return this;
     }
 
-    @Step("Bütün form elemanları gerekli şekilde dolduruldu. Kayıt ol butonuna basıldı")
+    @Step("Bütün form elemanları dolduruldu. Kayıt ol butonuna basıldı")
     public void clickSubmit() {
         WebElement submitButton = driver.findElement(By.xpath("/html/body/app-root/app-full-layout/sign-up1/div/div[1]/perfect-scrollbar/div/div[1]/div/button"));
         if(!submitButton.isEnabled()){
@@ -124,6 +124,11 @@ public class RegisterPage extends BaseTest {
             otpInputs.get(i).sendKeys(String.valueOf(otp.charAt(i)));
         }
         screenshot();
+    }
+
+    public void clickLoginPage(){
+        driver.findElement(By.xpath(("//a[contains(text(), 'Sign In')]")))
+                .click();
     }
 
 }

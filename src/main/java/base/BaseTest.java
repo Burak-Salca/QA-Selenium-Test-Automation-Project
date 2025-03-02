@@ -15,7 +15,7 @@ public class BaseTest extends BaseLibrary {
 
     @BeforeMethod(description = "Web taraıcı açıldı. Siteye yönlendirildi")
     public void beforeTest() throws InterruptedException {
-        cleanAllureResults();
+
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");

@@ -29,6 +29,12 @@ public class Data {
     public String company = "Company";
     public String title = "Test Engineer";
     public String password = "Siyah.0699*";
+    public String registeredAccount ="siyah.0699@hotmail.com";
+    public String wrongPassword = "Siyah0699*";
+    public String wrongVerifyCode = "000000";
+    public String unRegisteredAccount = "unregistered@example.com";
+    public String invalidEmail = "unregisteredexample.com";
+
 
 
     private String generateUniqueEmailBody() {

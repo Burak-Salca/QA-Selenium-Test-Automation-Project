@@ -1,10 +1,6 @@
 import base.BaseTest;
-import io.qameta.allure.Step;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -13,13 +9,7 @@ import pages.MailPage;
 import pages.MainPage;
 import pages.RegisterPage;
 
-import java.time.Duration;
-import java.util.List;
-
-import static pages.MailPage.mailDriver;
-import static pages.MailPage.mailWait;
-
-public class SuccessfulCase extends BaseTest {
+public class PositiveCase extends BaseTest {
 
     RegisterPage registerPage;
     MailPage mailPage;
