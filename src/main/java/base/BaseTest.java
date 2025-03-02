@@ -24,6 +24,7 @@ public class BaseTest extends BaseLibrary {
         options.addArguments("--flag-switches-end");
         createMailTmAccount(uniqueEmail,uniqueEmailPassword);
         driver = new ChromeDriver(options);
+        driver.manage().window().maximize();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get(url);
 

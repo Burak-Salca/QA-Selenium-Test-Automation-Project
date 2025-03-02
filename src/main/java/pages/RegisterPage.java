@@ -58,13 +58,14 @@ public class RegisterPage extends BaseTest {
         return this;
     }
 
+    @Step("Ünvan girildi")
     public RegisterPage enterTitle(String text){
         driver.findElement(By.xpath("/html/body/app-root/app-full-layout/sign-up1/div/div[1]/perfect-scrollbar/div/div[1]/div/form/div[3]/nz-form-item/nz-form-control/div/div/nz-select/nz-select-top-control/nz-select-search/input"))
                 .sendKeys(text);
         return this;
     }
 
-    @Step("TÜnvan girildi")
+
     public RegisterPage clickTitle(){
         driver.findElement(By.cssSelector("#cdk-overlay-1 > nz-option-container > div > cdk-virtual-scroll-viewport > div.cdk-virtual-scroll-content-wrapper > nz-option-item > div"))
                 .click();
@@ -103,6 +104,7 @@ public class RegisterPage extends BaseTest {
             Assert.fail("Form eksik ya da yanlış dolduruldu");
         }
         else{
+            screenshot();
             submitButton.click();
         }
     }
@@ -114,6 +116,7 @@ public class RegisterPage extends BaseTest {
         for (int i = 0; i < otp.length() && i < otpInputs.size(); i++) {
             otpInputs.get(i).sendKeys(String.valueOf(otp.charAt(i)));
         }
+        screenshot();
     }
 
 }

@@ -1,17 +1,18 @@
 package pages;
 
 
-import base.Data;
+import base.BaseLibrary;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 
-public class MainPage extends Data {
+public class MainPage extends BaseLibrary {
 
     @Step("Başarılı giriş yapıldı. Ana sayfaya yönlendirildi")
     public void isLoginSuccessful() {
+        screenshot();
         try {
             WebElement welcomeElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.xpath("//h4[contains(text(),'Welcome')]")

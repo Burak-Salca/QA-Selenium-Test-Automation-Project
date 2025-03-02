@@ -45,7 +45,7 @@ public class SuccessfulCase extends BaseTest {
         registerPage.enterFirstName(firstName)
                     .enterLastName(lastName)
                     .enterCountryCode(countryCode);
-        sleep(1500);
+        Thread.sleep(1500);
         registerPage.clickCountryCode()
                     .enterPhoneNumber(uniquePhone)
                     .enterCompany(company)
@@ -90,6 +90,7 @@ public class SuccessfulCase extends BaseTest {
         }
 
         registerPage.enterVerifyCode(otp);
+        attachScreenshotToStep("Başarılı bir şekilde kayıt olundu. Giriş sayfasına yönlendirildi");
 
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#cdk-overlay-4 > nz-modal-container > div > div > div")));

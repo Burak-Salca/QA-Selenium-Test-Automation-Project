@@ -15,7 +15,9 @@ import java.util.Random;
 public class Data {
 
     public static WebDriver driver;
+    public static WebDriver mailDriver;
     public static WebDriverWait wait;
+    public static WebDriverWait mailWait;
 
     public String url = "https://app.forceget.com/system/account/register";
     public String uniquePhone = generateUniquePhone();

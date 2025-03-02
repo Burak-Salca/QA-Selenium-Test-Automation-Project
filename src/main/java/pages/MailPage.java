@@ -1,9 +1,8 @@
 package pages;
 
-import base.Data;
+import base.BaseLibrary;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -11,10 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class MailPage extends Data {
-
-    public static WebDriver mailDriver;
-    public static WebDriverWait mailWait;
+public class MailPage extends BaseLibrary {
 
     @Step("E-posta web tarayıcıda açıldı")
     public MailPage openMail(){
@@ -55,6 +51,7 @@ public class MailPage extends Data {
     public MailPage clickMessage() throws InterruptedException {
         mailDriver.findElement(By.xpath("//*[@id=\"__nuxt\"]/div[1]/div[2]/main/div[2]/div[2]/ul/li/a/div")).click();
         Thread.sleep(2000);
+        screenshotMail();
         return this;
     }
 
@@ -68,7 +65,6 @@ public class MailPage extends Data {
                 By.cssSelector("div[style*='text-align: center'] p")));
         String otp = otpElement.getText().trim();
         System.out.println("Ayıklanan OTP: " + otp);
-
         return otp;
     }
 
