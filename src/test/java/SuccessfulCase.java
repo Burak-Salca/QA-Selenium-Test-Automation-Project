@@ -39,7 +39,6 @@ public class SuccessfulCase extends BaseTest {
 
     @Test(description = "Başarılı kayıt işleminden sonra başarılı giriş kontrolü")
     public void RegisterAndLoginTest() throws InterruptedException {
-
         Thread.sleep(5000);
 
         registerPage.enterFirstName(firstName)
@@ -90,7 +89,6 @@ public class SuccessfulCase extends BaseTest {
         }
 
         registerPage.enterVerifyCode(otp);
-        attachScreenshotToStep("Başarılı bir şekilde kayıt olundu. Giriş sayfasına yönlendirildi");
 
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#cdk-overlay-4 > nz-modal-container > div > div > div")));

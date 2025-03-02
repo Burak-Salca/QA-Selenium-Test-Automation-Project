@@ -6,6 +6,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 
 
 public class BaseLibrary extends Data{
@@ -23,5 +24,14 @@ public class BaseLibrary extends Data{
     public void attachScreenshotToStep(String stepName) {
         byte[] screenshotBytes = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
         Allure.addAttachment(stepName, "image/png", new ByteArrayInputStream(screenshotBytes), ".png");
+    }
+
+    void cleanAllureResults() {
+        File allureResults = new File("allure-results");
+        if (allureResults.exists() && allureResults.isDirectory()) {
+            for (File file : allureResults.listFiles()) {
+                file.delete();
+            }
+        }
     }
 }

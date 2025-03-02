@@ -15,6 +15,7 @@ public class BaseTest extends BaseLibrary {
 
     @BeforeMethod(description = "Web taraıcı açıldı. Siteye yönlendirildi")
     public void beforeTest(){
+        cleanAllureResults();
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
@@ -27,7 +28,6 @@ public class BaseTest extends BaseLibrary {
         driver.manage().window().maximize();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get(url);
-
     }
 
     @AfterMethod(description = "Web tarayıcı kapandı")
