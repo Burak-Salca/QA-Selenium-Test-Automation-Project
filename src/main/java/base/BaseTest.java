@@ -1,21 +1,19 @@
 package base;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import io.qameta.allure.Step;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.asserts.SoftAssert;
 
 import java.time.Duration;
 
 public class BaseTest extends BaseLibrary {
 
-    @BeforeMethod(description = "Web taraıcı açıldı. Siteye yönlendirildi")
+    @BeforeMethod(description = "Web taraıcı açıldı. Register sayfasına yönlendirildi")
     public void beforeTest() throws InterruptedException {
-
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
@@ -27,6 +25,7 @@ public class BaseTest extends BaseLibrary {
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        softAssert = new SoftAssert();
         driver.get(url);
         Thread.sleep(5000);
     }

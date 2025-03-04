@@ -1,0 +1,1 @@
+{"uuid":"4f38d88b-18dd-4543-a175-b5e54490b444","name":"PositiveCase.beforeTest","children":["801c95ad-3a6d-46dd-be84-e7b453d5b334"],"description":"","befores":[{"name":"beforeTest","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1741070715107,"stop":1741070722747}],"afters":[],"start":1741070715107,"stop":1741070722747}

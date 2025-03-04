@@ -10,15 +10,14 @@ import org.testng.Assert;
 
 public class MainPage extends BaseLibrary {
 
+    private static final By WELCOME_MESSAGE = By.xpath("//h4[contains(text(),'Welcome')]");
+
     @Step("Başarılı giriş yapıldı. Ana sayfaya yönlendirildi")
     public void isLoginSuccessful() {
-        screenshot();
         try {
-            WebElement welcomeElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//h4[contains(text(),'Welcome')]")
-            ));
-            Assert.assertTrue(welcomeElement.isDisplayed(), "Ana sayfaya giriş yapıldı");
-
+            WebElement welcomeElement = wait.until(ExpectedConditions.visibilityOfElementLocated(WELCOME_MESSAGE));
+            screenshot();
+            Assert.assertTrue(welcomeElement.isDisplayed(), "Welcome mesajı görünmüyor. Ana sayfaya giriş yapılamadı.");
         } catch (Exception e) {
             Assert.fail("Ana sayfaya giriş yapılamadı: " + e.getMessage());
         }

@@ -22,12 +22,10 @@ public class NegativeCase extends BaseTest {
         registerPage.enterFirstName(firstName)
                 .enterLastName(lastName)
                 .enterCountryCode(countryCode)
-                .clickCountryCode()
                 .enterPhoneNumber(uniquePhone)
                 .enterCompany(company)
                 .enterEmail(registeredAccount)
                 .enterTitle(title)
-                .clickTitle()
                 .enterFirstPassword(password)
                 .enterSecondPassword(password)
                 .clickCheckBox()
@@ -47,12 +45,10 @@ public class NegativeCase extends BaseTest {
         registerPage.enterFirstName(firstName)
                 .enterLastName(lastName)
                 .enterCountryCode(countryCode)
-                .clickCountryCode()
                 .enterPhoneNumber(uniquePhone)
                 .enterCompany(company)
                 .enterEmail(uniqueEmail)
                 .enterTitle(title)
-                .clickTitle()
                 .enterFirstPassword(password)
                 .enterSecondPassword(wrongPassword)
                 .clickCheckBox()
@@ -63,7 +59,6 @@ public class NegativeCase extends BaseTest {
         screenshot();
         String expectedMessage = "Passwords does not match!!";
         String actualMessage = errorMessage.getText();
-
         Assert.assertEquals(actualMessage, expectedMessage, "Beklenen şifre uyuşmazlık hata mesajı bulunamadı!");
     }
 
@@ -73,12 +68,10 @@ public class NegativeCase extends BaseTest {
         registerPage.enterFirstName(firstName)
                 .enterLastName(lastName)
                 .enterCountryCode(countryCode)
-                .clickCountryCode()
                 .enterPhoneNumber(uniquePhone)
                 .enterCompany(company)
                 .enterEmail(uniqueEmail)
                 .enterTitle(title)
-                .clickTitle()
                 .enterFirstPassword(password)
                 .enterSecondPassword(password)
                 .clickCheckBox()
@@ -88,45 +81,52 @@ public class NegativeCase extends BaseTest {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#cdk-overlay-3 > nz-modal-container > div > div > div")));
         System.out.println("Verify kodu yollandı");
         registerPage.enterVerifyCode(wrongVerifyCode);
-
         WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'Code not valid')]")));
         screenshot();
         String expectedMessage = "Code not valid";
         String actualMessage = errorMessage.getText();
-
         Assert.assertEquals(actualMessage, expectedMessage, "Beklenen doğrulama kodu hata mesajı bulunamadı!");
     }
 
     @Test(description = "Kayıtlı olmayan bir e-posta ile giriş kontrolü")
-    public void LoginWithUnregisteredEmailTest() throws InterruptedException {
+    public void LoginWithUnregisteredEmailTest()  {
 
-        registerPage.clickLoginPage();
-        wait.until(ExpectedConditions.urlContains("/login"));
-        loginPage.enterEmail(unRegisteredAccount)
-                .enterPassword(password)
-                .clickLogin();
-        WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'Incorrect email or password')]")));
-        screenshot();
-        String expectedMessage = "Incorrect email or password. Please check your information and try again";
-        String actualMessage = errorMessage.getText();
+        try {
+            registerPage.clickLoginPage();
+            wait.until(ExpectedConditions.urlContains("/login"));
+            loginPage.enterEmail(unRegisteredAccount)
+                    .enterPassword(password)
+                    .clickLogin(unRegisteredAccount,password);
+            WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'Incorrect email or password')]")));
+            screenshot();
+            String expectedMessage = "Incorrect email or password. Please check your information and try again";
+            String actualMessage = errorMessage.getText();
+            Assert.assertEquals(actualMessage, expectedMessage, "Beklenen giriş hata mesajı bulunamadı!");
 
-        Assert.assertEquals(actualMessage, expectedMessage, "Beklenen giriş hata mesajı bulunamadı!");
+        } catch (Exception e) {
+            Assert.fail("Login sayfasına yönlendirilemedi");
+        }
     }
 
     @Test(description = "Yanlış formatta e-posta ile giriş kontrolü")
-    public void LoginWithInvalidEmailFormatTest() throws InterruptedException {
+    public void LoginWithInvalidEmailFormatTest()  {
 
-        registerPage.clickLoginPage();
-        wait.until(ExpectedConditions.urlContains("/login"));
-        loginPage.enterEmail(invalidEmail)
-                .enterPassword(password)
-                .clickLogin();
-        WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'Please fill the required fields!')]")));
-        screenshot();
-        String expectedMessage = "Please fill the required fields!";
-        String actualMessage = errorMessage.getText();
+        try {
+            registerPage.clickLoginPage();
+            wait.until(ExpectedConditions.urlContains("/login"));
+            loginPage.enterEmail(invalidEmail)
+                    .enterPassword(password)
+                    .clickLogin(invalidEmail,password);
+            WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'Please fill the required fields!')]")));
+            screenshot();
+            String expectedMessage = "Please fill the required fields!";
+            String actualMessage = errorMessage.getText();
+            Assert.assertEquals(actualMessage, expectedMessage, "Beklenen giriş hata mesajı bulunamadı!");
 
-        Assert.assertEquals(actualMessage, expectedMessage, "Beklenen giriş hata mesajı bulunamadı!");
+        } catch (Exception e) {
+            Assert.fail("Login sayfasına yönlendirilemedi");
+        }
+
     }
 
 

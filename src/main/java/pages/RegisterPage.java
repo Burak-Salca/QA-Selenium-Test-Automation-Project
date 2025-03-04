@@ -13,122 +13,128 @@ import java.util.List;
 
 public class RegisterPage extends BaseTest {
 
+
+    private static final By FIRST_NAME_INPUT = By.cssSelector("#firstName");
+    private static final By LAST_NAME_INPUT = By.cssSelector("#lastName");
+    private static final By COUNTRY_CODE_INPUT = By.cssSelector("input.ant-select-selection-search-input");
+    private static final By COUNTRY_CODE_OPTION = By.cssSelector("span[_ngcontent-ng-c3869635075]");
+    private static final By PHONE_NUMBER_INPUT = By.cssSelector("#phoneNumber");
+    private static final By COMPANY_INPUT = By.cssSelector("#companyName");
+    private static final By EMAIL_INPUT = By.cssSelector("input[formcontrolname='email']");
+    private static final By TITLE_INPUT = By.cssSelector("nz-select[formcontrolname='jobTitle'] input.ant-select-selection-search-input");
+    private static final By TITLE_OPTION = By.cssSelector("div.ant-select-item-option-content");
+    private static final By FIRST_PASSWORD_INPUT = By.cssSelector("input[formcontrolname='password']");
+    private static final By SECOND_PASSWORD_INPUT = By.cssSelector("input[formcontrolname='passwordConfirm']");
+    private static final By CHECKBOX = By.className("checkbox-box");
+    private static final By ACCEPT_BUTTON = By.cssSelector("nz-modal-container div.ant-modal-footer button.ant-btn.ant-btn-primary");
+    private static final By SUBMIT_BUTTON = By.xpath("/html/body/app-root/app-full-layout/sign-up1/div/div[1]/perfect-scrollbar/div/div[1]/div/button");
+    private static final By OTP_INPUTS = By.cssSelector("div[formarrayname='otp'] input");
+    private static final By SIGN_IN_LINK = By.xpath("//a[contains(text(), 'Sign In')]");
+
     @Step("First name girildi")
-    public RegisterPage enterFirstName(String text){
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#firstName"))).sendKeys(text);
+    public RegisterPage enterFirstName(String text) {
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(FIRST_NAME_INPUT)).sendKeys(text);
+        }catch (Exception e){
+            Assert.fail("Sayfa yüklenmedi. Tekrar deneyin.");
+        }
         return this;
     }
 
     @Step("Last name girildi")
-    public RegisterPage enterLastName(String text){
-        driver.findElement(By.cssSelector("#lastName")).sendKeys(text);
+    public RegisterPage enterLastName(String text) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(LAST_NAME_INPUT)).sendKeys(text);
         return this;
     }
 
-
+    @Step("Telefon için ülke kodu girildi")
     public RegisterPage enterCountryCode(String text) throws InterruptedException {
-        driver.findElement(By.cssSelector("body > app-root > app-full-layout > sign-up1 > div > div.flex-1.flex.items-center.justify-center.main-content-form > perfect-scrollbar > div > div.ps-content > div > form > div.flex.custom-gap > nz-form-item.ant-form-item.ant-row.mb-0.min-w-100px > nz-form-control > div > div > nz-input-group > forceget-country-dropdown > nz-select > nz-select-top-control > nz-select-search > input"))
-                .sendKeys(text);
-        Thread.sleep(1500);
-        return this;
-    }
-
-    @Step("Telefon için ülke kodu seçildi")
-    public RegisterPage clickCountryCode(){
-        driver.findElement(By.xpath("//*[@id=\"cdk-overlay-0\"]/nz-option-container/div/cdk-virtual-scroll-viewport/div[1]/nz-option-item/div/div"))
-                .click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(COUNTRY_CODE_INPUT)).sendKeys(text);
+        WebElement countryElement = wait.until(ExpectedConditions.visibilityOfElementLocated(COUNTRY_CODE_OPTION));
+        String actualText = countryElement.getText();
+        if (actualText.contains(text)) {
+            countryElement.click();
+        }
+        else{
+            Assert.fail("Yanlış ülke kodu girilmiştir.");
+        }
         return this;
     }
 
     @Step("Benzersiz telefon numarası girildi")
-    public RegisterPage enterPhoneNumber(String text){
-        driver.findElement(By.cssSelector("#phoneNumber")).sendKeys(text);
+    public RegisterPage enterPhoneNumber(String text) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(PHONE_NUMBER_INPUT)).sendKeys(text);
         return this;
     }
 
     @Step("Şirket ismi girildi")
-    public RegisterPage enterCompany(String text){
-        driver.findElement(By.cssSelector("#companyName")).sendKeys(text);
+    public RegisterPage enterCompany(String text) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(COMPANY_INPUT)).sendKeys(text);
         return this;
     }
 
     @Step("E-posta adresi girildi")
-    public RegisterPage enterEmail(String text){
-        driver.findElement(By.cssSelector("body > app-root > app-full-layout > sign-up1 > div > div.flex-1.flex.items-center.justify-center.main-content-form > perfect-scrollbar > div > div.ps-content > div > form > nz-form-item:nth-child(5) > nz-form-control > div > div > nz-input-group > input"))
-                .sendKeys(text);
+    public RegisterPage enterEmail(String text) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(EMAIL_INPUT)).sendKeys(text);
         return this;
     }
 
     @Step("Ünvan girildi")
-    public RegisterPage enterTitle(String text) throws InterruptedException {
-        driver.findElement(By.xpath("/html/body/app-root/app-full-layout/sign-up1/div/div[1]/perfect-scrollbar/div/div[1]/div/form/div[3]/nz-form-item/nz-form-control/div/div/nz-select/nz-select-top-control/nz-select-search/input"))
-                .sendKeys(text);
-        Thread.sleep(1500);
-        return this;
-    }
-
-
-    public RegisterPage clickTitle(){
-        driver.findElement(By.cssSelector("#cdk-overlay-1 > nz-option-container > div > cdk-virtual-scroll-viewport > div.cdk-virtual-scroll-content-wrapper > nz-option-item > div"))
-                .click();
+    public RegisterPage enterTitle(String text) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(TITLE_INPUT)).sendKeys(text);
+        try {
+            boolean isTitleCorrect = wait.until(ExpectedConditions.textToBePresentInElementLocated(TITLE_OPTION, text));
+            Assert.assertTrue(isTitleCorrect, "İstenilen ünvan seçilemedi");
+            WebElement titleOption = wait.until(ExpectedConditions.elementToBeClickable(TITLE_OPTION));
+            titleOption.click();
+        } catch (Exception e) {
+            Assert.fail("İstenilen ünvan seçilemedi");
+        }
         return this;
     }
 
     @Step("Şifre oluşturuldu")
-    public RegisterPage enterFirstPassword(String text){
-        driver.findElement(By.xpath("/html/body/app-root/app-full-layout/sign-up1/div/div[1]/perfect-scrollbar/div/div[1]/div/form/div[4]/nz-form-item/nz-form-control/div/div/nz-input-group/input"))
-                .sendKeys(text);
+    public RegisterPage enterFirstPassword(String text) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(FIRST_PASSWORD_INPUT)).sendKeys(text);
         return this;
     }
 
     @Step("Oluşturulan şifre tekrar girildi")
-    public RegisterPage enterSecondPassword(String text){
-        driver.findElement(By.xpath("/html/body/app-root/app-full-layout/sign-up1/div/div[1]/perfect-scrollbar/div/div[1]/div/form/div[5]/nz-form-item/nz-form-control/div/div/nz-input-group/input"))
-                .sendKeys(text);
+    public RegisterPage enterSecondPassword(String text) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(SECOND_PASSWORD_INPUT)).sendKeys(text);
         return this;
     }
 
     @Step("Hizmet şartları ve gizlilik politikası okundu")
     public RegisterPage clickCheckBox() throws InterruptedException {
-        driver.findElement(By.className("checkbox-box")).click();
-        Thread.sleep(1000);
+        wait.until(ExpectedConditions.elementToBeClickable(CHECKBOX)).click();
+        Thread.sleep(1500);
         return this;
     }
 
     @Step("Hizmet şartları ve gizlilik politikası onaylandı")
     public RegisterPage clickAccept() throws InterruptedException {
-        driver.findElement(By.cssSelector("#cdk-overlay-2 > nz-modal-container > div > div > div.ant-modal-footer.ng-tns-c2116847144-12.ng-star-inserted > div > button > span"))
-                .click();
-        Thread.sleep(1000);
+        wait.until(ExpectedConditions.elementToBeClickable(ACCEPT_BUTTON)).click();
+        Thread.sleep(1500);
         return this;
     }
 
-    @Step("Bütün form elemanları dolduruldu. Kayıt ol butonuna basıldı")
+    @Step("Bütün form elemanları dolduruldu. Kayıt ol butonuna basıldı. Verify kodu yollandı")
     public void clickSubmit() {
-        WebElement submitButton = driver.findElement(By.xpath("/html/body/app-root/app-full-layout/sign-up1/div/div[1]/perfect-scrollbar/div/div[1]/div/button"));
-        if(!submitButton.isEnabled()){
-            screenshot();
-            Assert.fail("Form eksik ya da yanlış dolduruldu");
-        }
-        else{
-            screenshot();
-            submitButton.click();
-        }
+        wait.until(ExpectedConditions.elementToBeClickable(SUBMIT_BUTTON)).click();
+        screenshot();
     }
 
     @Step("Onay kodu girildi")
-    public void enterVerifyCode(String otp){
-        List<WebElement> otpInputs = driver.findElements(By.cssSelector("div[formarrayname='otp'] input"));
-        // OTP string'ini karakter karakter inputlara gönderelim:
+    public void enterVerifyCode(String otp) {
+        List<WebElement> otpInputs = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(OTP_INPUTS));
         for (int i = 0; i < otp.length() && i < otpInputs.size(); i++) {
             otpInputs.get(i).sendKeys(String.valueOf(otp.charAt(i)));
         }
         screenshot();
     }
 
-    public void clickLoginPage(){
-        driver.findElement(By.xpath(("//a[contains(text(), 'Sign In')]")))
-                .click();
+    public void clickLoginPage() {
+        wait.until(ExpectedConditions.elementToBeClickable(SIGN_IN_LINK)).click();
     }
-
 }

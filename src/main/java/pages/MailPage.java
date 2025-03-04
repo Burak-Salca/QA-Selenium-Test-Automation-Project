@@ -7,10 +7,22 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
 import java.time.Duration;
 
 public class MailPage extends BaseLibrary {
+
+    // Locators
+    private static final By PROFILE_INPUT = By.cssSelector("button[aria-label='Account']");
+    private static final By LOGIN_POPUP_BUTTON = By.cssSelector("button[role='menuitem']:has(span.truncate):nth-of-type(2)");
+    private static final By LOGIN_POPUP = By.xpath("//div[contains(@class, 'p-4 sm:p-6')]//h3[contains(text(), 'Log in to your account')]\n");
+    private static final By EMAIL_INPUT = By.cssSelector("#v-1-15");
+    private static final By PASSWORD_INPUT = By.cssSelector("#v-1-16");
+    private static final By LOGIN_BUTTON = By.xpath("//button[contains(text(), 'Login')]");
+    private static final By MAIL_MESSAGE = By.xpath("//div[contains(@class, 'truncate text-sm font-medium leading-5 text-indigo-600 dark:text-indigo-400')]");
+    private static final By IFRAME = By.id("iFrameResizer0");
+    private static final By OTP_ELEMENT = By.cssSelector("div[style*='text-align: center'] p");
 
     @Step("E-posta web tarayıcıda açıldı")
     public MailPage openMail() throws InterruptedException {
@@ -23,52 +35,82 @@ public class MailPage extends BaseLibrary {
 
     @Step("E-posta giriş sayfası açıldı")
     public MailPage openLoginMail() throws InterruptedException {
-        mailDriver.findElement(By.cssSelector("#__nuxt > div.h-screen.flex.overflow-hidden.bg-gray-100.antialiased.dark\\:bg-gray-900 > div.w-0.flex.flex-1.flex-col.overflow-hidden > div > div > div.flex.items-center.md\\:ml-6.sm\\:ml-4 > button.rounded-\\[calc\\(var\\(--ui-radius\\)\\*1\\.5\\)\\].font-medium.inline-flex.items-center.focus\\:outline-hidden.disabled\\:cursor-not-allowed.aria-disabled\\:cursor-not-allowed.disabled\\:opacity-75.aria-disabled\\:opacity-75.transition-colors.px-2\\.5.py-1\\.5.text-sm.gap-1\\.5.text-\\(--ui-primary\\).hover\\:text-\\(--ui-primary\\)\\/75.disabled\\:text-\\(--ui-primary\\).aria-disabled\\:text-\\(--ui-primary\\).focus-visible\\:ring-2.focus-visible\\:ring-inset.focus-visible\\:ring-\\(--ui-primary\\).group.flex-1.justify-between > span")).click();
-        Thread.sleep(500);
-        mailDriver.findElement(By.xpath("//*[@id=\"reka-dropdown-menu-content-v-1-9\"]/div[2]/button[2]")).click();
-        Thread.sleep(1000);
+        try {
+            mailWait.until(ExpectedConditions.visibilityOfElementLocated(PROFILE_INPUT));
+            mailWait.until(ExpectedConditions.elementToBeClickable(PROFILE_INPUT)).click();
+            mailWait.until(ExpectedConditions.visibilityOfElementLocated(LOGIN_POPUP_BUTTON));
+            mailWait.until(ExpectedConditions.elementToBeClickable(LOGIN_POPUP_BUTTON)).click();
+            screenshotMail();
+        }catch (Exception e){
+            Assert.fail("Mail login sayfası açılamadı");
+        }
         return this;
     }
 
     @Step("E-posta alanı girildi")
-    public MailPage enterMail(String text){
-        mailDriver.findElement(By.cssSelector("#v-1-15")).sendKeys(text);
+    public MailPage enterMail(String text) {
+        try {
+            mailWait.until(ExpectedConditions.visibilityOfElementLocated(LOGIN_POPUP));
+            mailWait.until(ExpectedConditions.visibilityOfElementLocated(EMAIL_INPUT)).sendKeys(text);
+            screenshotMail();
+        }catch (Exception e){
+            Assert.fail("Login popup sayfasına e-posta dresi girilemedi");
+        }
         return this;
     }
 
     @Step("Şifre alanı girildi")
     public MailPage enterPassword(String text) throws InterruptedException {
-        Thread.sleep(500);
-        mailDriver.findElement(By.xpath("//*[@id=\"v-1-16\"]")).sendKeys(text);
-        Thread.sleep(1000);
+        mailWait.until(ExpectedConditions.visibilityOfElementLocated(LOGIN_POPUP));
+        mailWait.until(ExpectedConditions.visibilityOfElementLocated(PASSWORD_INPUT)).sendKeys(text);
+        screenshotMail();
+        Thread.sleep(2000);
         return this;
     }
 
     @Step("Giriş yap butonuna basıldı")
-    public MailPage clickLogin(){
-        mailDriver.findElement(By.cssSelector("body > div.fixed.bg-\\(--ui-bg\\).divide-y.divide-\\(--ui-border\\).flex.flex-col.focus\\:outline-none.data-\\[state\\=open\\]\\:animate-\\[scale-in_200ms_ease-out\\].data-\\[state\\=closed\\]\\:animate-\\[scale-out_200ms_ease-in\\].top-1\\/2.left-1\\/2.-translate-x-1\\/2.-translate-y-1\\/2.w-\\[calc\\(100vw-2rem\\)\\].max-w-lg.max-h-\\[calc\\(100vh-2rem\\)\\].sm\\:max-h-\\[calc\\(100vh-4rem\\)\\].rounded-\\[calc\\(var\\(--ui-radius\\)\\*2\\)\\].shadow-lg.ring.ring-\\(--ui-border\\) > div > div > div.mt-5.sm\\:grid.sm\\:grid-flow-row-dense.sm\\:grid-cols-2.sm\\:mt-8.sm\\:gap-3 > span.w-full.flex.rounded-md.shadow-sm.sm\\:col-start-2 > button")).click();
+    public MailPage clickLogin(String text) {
+        WebElement passwordField = mailWait.until(ExpectedConditions.visibilityOfElementLocated(PASSWORD_INPUT));
+        String enteredPassword = passwordField.getAttribute("value");
+        System.out.println(enteredPassword);
+        if (enteredPassword.equals(text)) {
+            mailWait.until(ExpectedConditions.visibilityOfElementLocated(LOGIN_BUTTON));
+            mailWait.until(ExpectedConditions.elementToBeClickable(LOGIN_BUTTON)).click();
+            System.out.println("Mail login işlemi başarılı");
+        } else {
+            Assert.fail("Girilen şifre yanlış! Mail adresine giriş yapılamıyor");
+        }
         return this;
     }
 
     @Step("Doğrulama e-posta alındı")
     public MailPage clickMessage() throws InterruptedException {
-        mailDriver.findElement(By.xpath("//*[@id=\"__nuxt\"]/div[1]/div[2]/main/div[2]/div[2]/ul/li/a/div")).click();
-        Thread.sleep(2000);
+        WebElement element = mailWait.until(ExpectedConditions.visibilityOfElementLocated(MAIL_MESSAGE));
         screenshotMail();
+        String actualText = element.getText();
+        if (actualText.equals("FORCEGET")) {
+            System.out.println("FORCEGET şirketinden gelen mail bulundu.");
+            mailWait.until(ExpectedConditions.elementToBeClickable(MAIL_MESSAGE)).click();
+        } else {
+            Assert.fail("FROCEGET şirketinden gelen bir mail bulunamadı!");
+        }
         return this;
     }
 
-    public String getVerifyCode(){
-        // İlgili iframe'i locate edip geçiş yapıyoruz
-        WebElement iframeElement = mailWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("iFrameResizer0")));
-        mailDriver.switchTo().frame(iframeElement);
-
-        // OTP elementini locate edin; burada, div içinde p etiketini arıyoruz
-        WebElement otpElement = mailWait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.cssSelector("div[style*='text-align: center'] p")));
-        String otp = otpElement.getText().trim();
-        System.out.println("Ayıklanan OTP: " + otp);
-        return otp;
+    @Step("Doğrulama e-postası açıldı")
+    public String getVerifyCode() {
+        String verifyCode = null;
+        try {
+            WebElement iframeElement = mailWait.until(ExpectedConditions.visibilityOfElementLocated(IFRAME));
+            mailDriver.switchTo().frame(iframeElement);
+            WebElement otpElement = mailWait.until(ExpectedConditions.visibilityOfElementLocated(OTP_ELEMENT));
+            screenshotMail();
+            verifyCode = otpElement.getText().trim();
+            System.out.println("Ayıklanan doğrulama kodu: " + verifyCode);
+            mailDriver.quit();
+        } catch (Exception e) {
+            Assert.fail("Doğrulama kodu bulunamadı.");
+        }
+        return verifyCode;
     }
-
 }
