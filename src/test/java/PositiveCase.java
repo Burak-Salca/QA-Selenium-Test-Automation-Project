@@ -28,17 +28,17 @@ public class PositiveCase extends BaseTest {
     @Test(description = "Başarılı kayıt işleminden sonra başarılı giriş kontrolü")
     public void RegisterAndLoginTest() throws InterruptedException {
         registerPage.enterFirstName(firstName)
-                .enterLastName(lastName)
-                .enterCountryCode(countryCode)
-                .enterPhoneNumber(uniquePhone)
-                .enterCompany(company)
-                .enterEmail(uniqueEmail)
-                .enterTitle(title)
-                .enterFirstPassword(password)
-                .enterSecondPassword(password)
-                .clickCheckBox()
-                .clickAccept()
-                .clickSubmit();
+                    .enterLastName(lastName)
+                    .enterCountryCode(countryCode)
+                    .enterPhoneNumber(uniquePhone)
+                    .enterCompany(company)
+                    .enterEmail(uniqueEmail)
+                    .enterTitle(title)
+                    .enterFirstPassword(password)
+                    .enterSecondPassword(password)
+                    .clickCheckBox()
+                    .clickAccept()
+                    .clickSubmit();
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#cdk-overlay-3 > nz-modal-container > div > div > div")));
             System.out.println("Verify kodu yollandı");

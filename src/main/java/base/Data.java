@@ -3,7 +3,6 @@ package base;
 import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.asserts.SoftAssert;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -19,7 +18,6 @@ public class Data {
     public static WebDriver mailDriver;
     public static WebDriverWait wait;
     public static WebDriverWait mailWait;
-    public static SoftAssert softAssert;
 
     public String url = "https://app.forceget.com/system/account/register";
     public String uniquePhone = generateUniquePhone();
@@ -37,6 +35,8 @@ public class Data {
     public String unRegisteredAccount = "unregistered@example.com";
     public String invalidEmail = "unregisteredexample.com";
 
+
+
     private String generateUniqueEmailBody() {
         long timestamp = System.currentTimeMillis();
         String userName = generateRandomEmailPassword();
@@ -45,7 +45,7 @@ public class Data {
 
     private String genarteUniqueEmail(){
         String emailBody = generateUniqueEmailBody();
-        return emailBody + "@edny.net";
+        return emailBody + "@indigobook.com";
     }
 
     private String generateRandomEmailPassword(){

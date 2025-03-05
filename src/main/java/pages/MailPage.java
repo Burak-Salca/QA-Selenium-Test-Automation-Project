@@ -64,7 +64,7 @@ public class MailPage extends BaseLibrary {
         mailWait.until(ExpectedConditions.visibilityOfElementLocated(LOGIN_POPUP));
         mailWait.until(ExpectedConditions.visibilityOfElementLocated(PASSWORD_INPUT)).sendKeys(text);
         screenshotMail();
-        Thread.sleep(2000);
+        Thread.sleep(3000);
         return this;
     }
 

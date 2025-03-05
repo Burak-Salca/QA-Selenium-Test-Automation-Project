@@ -25,7 +25,6 @@ public class BaseTest extends BaseLibrary {
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        softAssert = new SoftAssert();
         driver.get(url);
         Thread.sleep(5000);
     }

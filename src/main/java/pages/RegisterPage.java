@@ -48,7 +48,7 @@ public class RegisterPage extends BaseTest {
     }
 
     @Step("Telefon için ülke kodu girildi")
-    public RegisterPage enterCountryCode(String text) throws InterruptedException {
+    public RegisterPage enterCountryCode(String text) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(COUNTRY_CODE_INPUT)).sendKeys(text);
         WebElement countryElement = wait.until(ExpectedConditions.visibilityOfElementLocated(COUNTRY_CODE_OPTION));
         String actualText = countryElement.getText();
