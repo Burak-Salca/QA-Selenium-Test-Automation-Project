@@ -83,3 +83,6 @@ Bu projede **pozitif ve negatif test senaryoları** uygulanmıştır.
 | 🔴 **Yanlış Şifre Tekrarı ile Kayıt Olma** | Şifre ve şifre tekrarı uyuşmadığında hata mesajının çıktığını doğrulama |
 | 🔴 **Yanlış Doğrulama Kodu ile Kayıt Tamamlama** | E-posta doğrulama kodunun yanlış girildiğinde hata mesajı verilmesi |
 
+---
+
+📌 **Bu proje, kapsamlı test senaryoları, detaylı hata raporlaması ve otomatik test süreçleriyle sağlam bir test otomasyonu altyapısı sunmaktadır.** 🚀
