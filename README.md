@@ -2,9 +2,7 @@
 
 ## 📌 Proje Açıklaması
 Bu proje, **Selenium WebDriver, Java ve TestNG kullanarak bir web uygulamasının başarılı bir kayıt ve başarılı bir giriş test otomasyonunu gerçekleştirmek amacıyla geliştirilmiştir**.  
-Test senaryolarında, **her kayıt işlemi için girilen e-posta adresine doğrulama (verify) kodu gönderilir ve bu kodun register sayfasına girilerek hesap onaylanır**.  
-**Aynı e-posta ile tekrar kayıt yapılamayacağından**, her test başında **Mail.TM API** kullanılarak **benzersiz bir e-posta ve şifre oluşturulur**.  
-Daha sonra, bu e-postaya gelen doğrulama kodu alınarak kayıt sürecinde kullanılır.
+Pozitif test senaryosında, **her kayıt işlemi için girilen e-posta adresine doğrulama (verify) kodu gönderilir ve bu kodun register sayfasına girilerek hesap onaylanır**. **Aynı e-posta ile tekrar kayıt yapılamayacağından**, her test başında **Mail.TM API** kullanılarak **benzersiz bir e-posta ve şifre oluşturulur**. Daha sonra, bu e-postaya gelen doğrulama kodu alınarak kayıt sürecinde kullanılır.
 Pozitif ve negatif test senaryoları ile **kapsamlı bir test altyapısı oluşturulmuştur**. Ayrıca, **Allure Raporlama Sistemi** kullanılarak test sonuçları analiz edilmiştir.
 
 ## 📊 **Otomasyon Testi Raporlaması**
